@@ -1,94 +1,139 @@
-import requests
-from pprint import pprint
-import matplotlib as plt
+import json
+from GeniusSong import GeniusSong
+import config
 import csv
 from dateutil.parser import parse
-from requests import api
-import config
-from requests.api import head
+import pandas as pd
+from pprint import pprint
+import requests
 
 # https://api.genius.com/search?q=hello&access_token=[your-access-token]
 
 root_url = "https://api.genius.com/"
 
-print(config.api_key)
+# ----- API Functions -----
 
-def get_songs():
-    song_path = "artists/820/songs"
+# Gets all songs for an artist_id
+#
+# `artist_id`: int - genius artist id
+# Returns -> List[GeniusSong]
+#
+# https://docs.genius.com/#artists-h2
+def get_all_songs(artist_id: int):
+    song_path = f'artists/{str(artist_id)}/songs'
+
     page = 1
     songs = []
     while page is not None:
         params = {"page": page, "per_page": "50", 'access_token': config.api_key}
         repsonse = requests.request(method="GET", url=root_url+song_path, params=params).json()
-        print(repsonse)
-        repsonse = repsonse['response']
-        page = repsonse['next_page']
+
+        try:
+            repsonse = repsonse['response']
+            page = repsonse['next_page']
+        except:
+            error = repsonse['error']
+            print(error)
+            return []
+
         for song in repsonse['songs']:
-            songs.append(song)
+            songs.append(GeniusSong(json=song))
+
     return songs
 
-def write_songs(songs):
-    with open("mac_miller_songs.csv", 'w') as csvfile: 
+
+# Gets a specific song from song id
+#
+# `song_id`: int - genius song id
+# https://docs.genius.com/#songs-h2
+def get_song_from_id(song_id):
+    params = {'access_token': config.api_key}
+    response = requests.request(method="GET", url=f'https://api.genius.com/songs/{str(song_id)}', params=params).json()
+
+    try:
+        song = response['response']['song']['album']
+        return song
+    except:
+        error = response['error']
+        print(error)
+        return None
+
+
+
+# ----- CSV Write/Read -----
+
+# Write songs to a csv
+#
+# `songs`: [GeniusSong]
+def write_songs(songs, file):
+    with open(file, 'w') as csvfile: 
         csvwriter = csv.writer(csvfile) 
-        csvwriter.writerow(["Count", "Title", "Id", "PageViews", "URL", "Song_Art_URL"])
+        csvwriter.writerow(songs[0].make_header())
 
-        count = -1
         for song in songs:
-            count += 1
-            try:
-                pageviews = song['stats']['pageviews']
-            except:
-                pageviews = None
+            csvwriter.writerow(song.make_row())
 
-            row = [
-                str(count), 
-                str(song['title_with_featured']), 
-                str(song['id']), 
-                pageviews, 
-                str(song['url']), 
-                str(song['song_art_image_url'])
-            ]
-            csvwriter.writerow(row)
-    print("Done!")
+    print(f'Done!\nFile: {csvfile}')
 
-def get_song_ids():
-    with open("mac_miller_songs.csv", 'r') as csvfile: 
+
+def get_column_from_csv(file, value):
+    with open(file, 'r') as csvfile: 
         reader = csv.DictReader(csvfile)
 
         firstLine = True
-        ids = []
+        values = []
         for row in reader:
             if firstLine:
                 firstLine = False
                 continue
 
-            ids.append(row["Id"])
+            values.append(row[value])
 
-    return ids
+    return values
 
-def get_song_from_id(id):
-    params = {'access_token': api_key}
-    response = requests.request(method="GET", url=f'https://api.genius.com/songs/{str(id)}', params=params).json()
-    return response['response']['song']['album']
 
-songs = get_songs()
-write_songs(songs)
 
-# ids = get_song_ids()
+# Script
+# ----- Get Songs
+file = "mac_miller_songs.csv"
+mac_id = 820
+songs = get_all_songs(artist_id=mac_id)
+write_songs(songs, file)
+# ---------------------------------------------------
+
+# ----- Get full song JSON from id
+# ids = get_column_from_csv(file, 'id')
+
 # full_songs = []
 # for id in ids:  
 #     full_songs.append(get_song_from_id(id))
 
 # for song in full_songs:
 #     print(song["release_date"])
+# ---------------------------------------------------
 
-# ---- TODO ----
-# Song by popularity
-# Top Albums
-# Ability to generate worksheet from artist id / CLI
-# Google drive API
-# Object-oriented
-# Tabluea
-# Machine learning / lyric analysis
-# Top words by album
-# PUSH TO GIT
+# ----- Top Songs
+def get_top_songs(file):
+    df = pd.read_csv(file)
+    print(df.head())
+    titles = df.loc[:, "title"]
+    views = df.loc[:, 'views']
+
+    
+get_top_songs(file)
+# ---------------------------------------------------
+
+# ----- Top Albums
+
+# ----- Top Words Per Song
+
+# ----- Send to GoogleDrive
+
+# ----- Create Objects
+
+# ---- TODO / Brainstorm ----
+# CLI wrapper
+# Pull from Google Drive to Tabluea
+# Lyric Analysis with frequency analysis
+# Another API for album sales? 
+# Top words used in top albums by sale

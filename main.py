@@ -1,17 +1,20 @@
+import Util
 import json
 from GeniusSong import GeniusSong
 import config
 import csv
 from dateutil.parser import parse
 import pandas as pd
+import pickle
 from pprint import pprint
+import os
 import requests
 
 # https://api.genius.com/search?q=hello&access_token=[your-access-token]
 
 root_url = "https://api.genius.com/"
 
-# ----- API Functions -----
+# ---------- API Functions ----------
 
 # Gets all songs for an artist_id
 #
@@ -59,13 +62,13 @@ def get_song_from_id(song_id):
         return None
 
 
-
-# ----- CSV Write/Read -----
+# ---------- CSV Write/Read ----------
 
 # Write songs to a csv
 #
 # `songs`: [GeniusSong]
 def write_songs(songs, file):
+    print(f'Writing to {str(file)}...')
     with open(file, 'w') as csvfile: 
         csvwriter = csv.writer(csvfile) 
         csvwriter.writerow(songs[0].make_header())
@@ -73,9 +76,15 @@ def write_songs(songs, file):
         for song in songs:
             csvwriter.writerow(song.make_row())
 
-    print(f'Done!\nFile: {csvfile}')
+    print(f'{file} created!')
 
-
+# Read column from csv
+#
+# `file`: Name of CSV file to read from
+# `value`: column_name to read from the CSV
+#
+# Returns -> List[Values]
+#
 def get_column_from_csv(file, value):
     with open(file, 'r') as csvfile: 
         reader = csv.DictReader(csvfile)
@@ -91,37 +100,46 @@ def get_column_from_csv(file, value):
 
     return values
 
+# ---------- Cache Functions ----------
+def cache(file, data):
+    with open(file, 'wb') as pickleFile:
+        pickle.dump(data, pickleFile)
 
+def get_cache(file):
+    if os.path.exists(file):
+        with open(file, 'rb') as file:
+            return pickle.load(file)
+    else:
+        return False
 
-# Script
-# ----- Get Songs
-file = "mac_miller_songs.csv"
-mac_id = 820
-songs = get_all_songs(artist_id=mac_id)
-write_songs(songs, file)
-# ---------------------------------------------------
+# ---------- Song Util ----------
+@Util.timer_sec
+def create_artist_csv(file, artist_id):
+    cache_file = f'{artist_id}.pkl'
+    cache_if_exists = get_cache(cache_file)
+    if cache_if_exists:
+        print(f'Found {cache_file} cache!')
+        songs = cache_if_exists
+    else:
+        print(f'{cache_file} empty.')
+        songs = get_all_songs(artist_id)
 
-# ----- Get full song JSON from id
-# ids = get_column_from_csv(file, 'id')
+    cache(file=cache_file, data=songs)
+    write_songs(songs, file)
 
-# full_songs = []
-# for id in ids:  
-#     full_songs.append(get_song_from_id(id))
-
-# for song in full_songs:
-#     print(song["release_date"])
-# ---------------------------------------------------
-
-# ----- Top Songs
 def get_top_songs(file):
     df = pd.read_csv(file)
-    print(df.head())
-    titles = df.loc[:, "title"]
-    views = df.loc[:, 'views']
+    valid_table = df.loc[:, 'title':'views'].sort_index()
+    print(valid_table.head())
 
-    
+
+# ---------- Script ----------
+file = "mac_miller_songs.csv"
+mac_id = 820
+create_artist_csv(file, mac_id)
+
+# ----- Top Songs
 get_top_songs(file)
-# ---------------------------------------------------
 
 # ----- Top Albums
 

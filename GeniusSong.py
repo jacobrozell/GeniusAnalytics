@@ -29,7 +29,7 @@ class GeniusSong:
         row = [
             str(self.id),
             str(self.title),
-            str(self.views), 
+            self.views, 
             str(self.lyrics_url), 
             str(self.art_url)
         ]

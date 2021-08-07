@@ -4,6 +4,7 @@ from GeniusSong import GeniusSong
 import config
 import csv
 from dateutil.parser import parse
+import numpy as np
 import pandas as pd
 import pickle
 from pprint import pprint
@@ -60,7 +61,6 @@ def get_song_from_id(song_id):
         error = response['error']
         print(error)
         return None
-
 
 # ---------- CSV Write/Read ----------
 
@@ -127,10 +127,13 @@ def create_artist_csv(file, artist_id):
     cache(file=cache_file, data=songs)
     write_songs(songs, file)
 
-def get_top_songs(file):
+def get_top_songs(file, artist_id):
     df = pd.read_csv(file)
-    valid_table = df.loc[:, 'title':'views'].sort_index()
-    print(valid_table.head())
+    valid_table = df.loc[:, 'title':'views']
+    #valid_table = valid_table.replace(to_replace='None', value=np.nan).dropna()
+    valid_table = valid_table.sort_values('views', ascending=False)
+    print(valid_table.head(10))
+    valid_table.to_csv(f'top_ten{artist_id}.csv', index=False)
 
 
 # ---------- Script ----------
@@ -139,15 +142,13 @@ mac_id = 820
 create_artist_csv(file, mac_id)
 
 # ----- Top Songs
-get_top_songs(file)
+get_top_songs(file, mac_id)
 
 # ----- Top Albums
 
 # ----- Top Words Per Song
 
 # ----- Send to GoogleDrive
-
-# ----- Create Objects
 
 # ---- TODO / Brainstorm ----
 # CLI wrapper

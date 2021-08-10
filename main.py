@@ -6,7 +6,7 @@ import pandas as pd
 # ---------- Scripting Util ----------
 @GeniusUtil.timer_sec
 def create_artist_csv(file, artist_id):
-    cache_file = f'{artist_id}.pkl'
+    cache_file = f'cache/{artist_id}.pkl'
     cache_if_exists = GeniusUtil.get_cache(cache_file)
     if cache_if_exists:
         print(f'Found {cache_file} cache!')
@@ -20,7 +20,7 @@ def create_artist_csv(file, artist_id):
 
 @GeniusUtil.timer_sec
 def create_artist_csv_full_song(file, artist_id):
-    cache_file = f'{artist_id}_full.pkl'
+    cache_file = f'cache/{artist_id}_full.pkl'
     cache_if_exists = GeniusUtil.get_cache(cache_file)
     if cache_if_exists:
         print(f'Found {cache_file} cache!')
@@ -66,5 +66,3 @@ valid_table.to_csv(f'top_songs/{artist_id}_{artist_name} top_songs.csv', index=F
 # Another API for album sales? 
 ##  Need new API for albums
 # Top words used in top albums by sale
-
-

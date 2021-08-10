@@ -89,3 +89,9 @@ Finished 'create_artist_csv' in 0.0124 secs ; time_stamp: 2021-08-10 10:23:00.61
 Finished 'create_artist_csv' in 0.0145 secs ; time_stamp: 2021-08-10 10:27:11.496440
 Finished 'create_artist_csv' in 0.0111 secs ; time_stamp: 2021-08-10 10:31:24.730044
 Finished 'create_artist_csv_full_song' in 676.6529 secs ; time_stamp: 2021-08-10 10:42:41.374833
+Finished 'create_artist_csv' in 0.0153 secs ; time_stamp: 2021-08-10 11:18:52.831376
+Finished 'create_artist_csv_full_song' in 0.1949 secs ; time_stamp: 2021-08-10 11:18:53.026850
+Finished 'create_artist_csv' in 28.5923 secs ; time_stamp: 2021-08-10 11:20:50.975296
+Finished 'create_artist_csv_full_song' in 537.2500 secs ; time_stamp: 2021-08-10 11:29:48.211510
+Finished 'create_artist_csv' in 0.0137 secs ; time_stamp: 2021-08-10 11:41:08.566819
+Finished 'create_artist_csv_full_song' in 0.2167 secs ; time_stamp: 2021-08-10 11:41:08.784123

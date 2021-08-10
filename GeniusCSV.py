@@ -1,9 +1,10 @@
 import csv
 
-# Write songs to a csv
-#
-# `songs`: [GeniusSong]
 def write_songs(songs, file):
+    """
+    Write songs to a csv.
+    `songs`: [GeniusSong]
+    """
     print(f'Writing to {str(file)}...')
     with open(file, 'w') as csvfile: 
         csvwriter = csv.writer(csvfile) 
@@ -14,14 +15,13 @@ def write_songs(songs, file):
 
     print(f'{file} created!')
 
-# Read column from csv
-#
-# `file`: Name of CSV file to read from
-# `value`: column_name to read from the CSV
-#
-# Returns -> List[Values]
-#
 def get_column_from_csv(file, value):
+    """
+    Read column from csv.
+    `file`: Name of CSV file to read from.
+    `value`: column_name to read from the CSV.
+    Returns -> List[Values]
+    """
     with open(file, 'r') as csvfile: 
         reader = csv.DictReader(csvfile)
 

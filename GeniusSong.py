@@ -36,18 +36,30 @@ class GeniusSong:
 
         return row
 
-# class FullSong(GeniusSong):
-#     # Properties
-#     json = ""
-#     release_date: str  # yyyy-mm-dd
+class GeniusFullSong(GeniusSong):
+    # Properties
+    json = ""
+    release_date: str  # yyyy-mm-dd
     
-    
+    # Init
+    def __init__(self, json):
+        super().__init__(json)
+        self.json = json
+        self.release_date = json['release_date']
 
-#     # Init
-#     def __init__(self, json):
-#         super.__init__(self, json)
-#         self.json = json
-#         self.release_date = json['release_date']
-#         album = json['album']
+    # CSV Util
+    def make_header(self):
+        return ["id", "title", "views", "lyric_url", "art_url", "release_date"]
+
+    def make_row(self):
+        row = [
+            str(self.id),
+            str(self.title),
+            self.views, 
+            str(self.lyrics_url), 
+            str(self.art_url),
+            str(self.release_date)
+        ]
+        return row
 
     

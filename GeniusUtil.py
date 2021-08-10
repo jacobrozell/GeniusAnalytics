@@ -4,6 +4,7 @@ import pickle
 import os
 import time
 
+# ----- Timer -----
 def timer_sec(func):
     """Print the runtime of the decorated function"""
     @functools.wraps(func)
@@ -21,6 +22,7 @@ def timer_sec(func):
         return value
     return wrapper_timer
 
+# ----- Caching -----
 def cache(file, data):
     with open(file, 'wb') as pickleFile:
         pickle.dump(data, pickleFile)

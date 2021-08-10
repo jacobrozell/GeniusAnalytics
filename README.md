@@ -7,6 +7,7 @@ https://docs.genius.com/#/getting-started-h1
     1. Clone Repo
     2. Create new file `config.py`
     3.  Add `api_key` variable as a string to your key.
-        ```python
-        api_key = "<API_KEY>"
-        ```
+    
+``` python
+api_key = "<API_KEY>"
+```

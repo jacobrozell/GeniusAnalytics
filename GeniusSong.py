@@ -35,3 +35,19 @@ class GeniusSong:
         ]
 
         return row
+
+# class FullSong(GeniusSong):
+#     # Properties
+#     json = ""
+#     release_date: str  # yyyy-mm-dd
+    
+    
+
+#     # Init
+#     def __init__(self, json):
+#         super.__init__(self, json)
+#         self.json = json
+#         self.release_date = json['release_date']
+#         album = json['album']
+
+    

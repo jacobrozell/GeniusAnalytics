@@ -1,14 +1,14 @@
 import GeniusAPI
 import GeniusCSV
+import GeniusUtil
 import pandas as pd
 from pprint import pprint
-import Util
 
 
-@Util.timer_sec
+@GeniusUtil.timer_sec
 def create_artist_csv(file, artist_id):
     cache_file = f'{artist_id}.pkl'
-    cache_if_exists = Util.get_cache(cache_file)
+    cache_if_exists = GeniusUtil.get_cache(cache_file)
     if cache_if_exists:
         print(f'Found {cache_file} cache!')
         songs = cache_if_exists
@@ -16,7 +16,7 @@ def create_artist_csv(file, artist_id):
         print(f'{cache_file} empty.')
         songs = GeniusAPI.get_all_songs(artist_id)
 
-    Util.cache(file=cache_file, data=songs)
+    GeniusUtil.cache(file=cache_file, data=songs)
     GeniusCSV.write_songs(songs, file)
 
 

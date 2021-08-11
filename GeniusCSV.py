@@ -6,7 +6,7 @@ def write_songs(songs, file):
     `songs`: [GeniusSong]
     """
     print(f'Writing to {str(file)}...')
-    with open(file, 'w') as csvfile: 
+    with open(file, 'w+') as csvfile: 
         csvwriter = csv.writer(csvfile) 
         csvwriter.writerow(songs[0].make_header())
 

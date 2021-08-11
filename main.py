@@ -13,13 +13,14 @@ def create_artist_csv(file, artist_id):
         songs = cache_if_exists
     else:
         print(f'{cache_file} empty.')
+        print("This may take some time....")
         songs = GeniusAPI.get_all_songs(artist_id)
 
     GeniusUtil.cache(file=cache_file, data=songs)
     GeniusCSV.write_songs(songs, file)
 
 @GeniusUtil.timer_sec
-def create_artist_csv_full_song(file, artist_id):
+def create_artist_csv_full_song(readFile, file, artist_id):
     cache_file = f'cache/{artist_id}_full.pkl'
     cache_if_exists = GeniusUtil.get_cache(cache_file)
     if cache_if_exists:
@@ -27,20 +28,24 @@ def create_artist_csv_full_song(file, artist_id):
         songs = cache_if_exists
     else:
         print(f'{cache_file} full empty.')
-        songs = GeniusAPI.get_all_full_songs(file)
+        print("This may take some time....")
+        songs = GeniusAPI.get_all_full_songs(readFile)
 
     GeniusUtil.cache(file=cache_file, data=songs)
     GeniusCSV.write_songs(songs, file)
 
 # ---------- Script ----------
-artist_id = 820
-artist_name = "mac_miller"
+print("---------- Genuis Analytics ----------")
+artist_name = "drake"
+artist_id = GeniusAPI.search(artist_name)
+
+print(f'Artist_id found: {artist_id}\n')
 
 file = f'songs/{artist_id}_{artist_name}_songs.csv'
 full_file = f'songs/{artist_id}_{artist_name}_fullsongs.csv'
 
 create_artist_csv(file, artist_id)
-create_artist_csv_full_song(full_file, artist_id)
+create_artist_csv_full_song(readFile=file, file=full_file, artist_id=artist_id)
 
 # ---------- Top Songs ----------
 df = pd.read_csv(file)

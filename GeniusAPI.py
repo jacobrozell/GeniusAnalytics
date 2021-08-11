@@ -1,12 +1,41 @@
-import json
 import config
 import GeniusCSV
 from GeniusSong import GeniusSong, GeniusFullSong
 import requests
 
-# https://api.genius.com/search?q=hello&access_token=[your-access-token]
 
 root_url = "https://api.genius.com/"
+headersMap = {
+            "User-Agent": "CompuServe Classic/1.22",
+            "Accept": "application/json",
+            "Authorization": "Bearer " + config.api_key
+    }
+
+
+def search(query):
+    """
+    Search documents hosted on Genius.
+
+    `query`: str - Can be artist or song
+
+    https://docs.genius.com/#search-h2
+    """
+
+    search_path = f'search'
+    params = {"q": query}
+    repsonse = requests.request(method="GET", url=root_url+search_path, params=params, headers=headersMap).json()
+
+    try:
+        repsonse = repsonse['response']
+    except:
+        repsonse = repsonse['meta']
+        print(f'Search_API error: {repsonse}')
+        return
+
+    for hit in repsonse['hits']:
+        if hit['type'] == 'song':
+            artist_id = hit['result']['primary_artist']['id']
+            return artist_id
 
 
 def get_all_songs(artist_id: int):
@@ -19,12 +48,11 @@ def get_all_songs(artist_id: int):
     https://docs.genius.com/#artists-h2
     """
     song_path = f'artists/{str(artist_id)}/songs'
-
     page = 1
     songs = []
     while page is not None:
-        params = {"page": page, "per_page": "50", 'access_token': config.api_key}
-        repsonse = requests.request(method="GET", url=root_url+song_path, params=params).json()
+        params = {"page": page, "per_page": "50"}
+        repsonse = requests.request(method="GET", url=root_url+song_path, params=params, headers=headersMap).json()
 
         try:
             repsonse = repsonse['response']
@@ -47,8 +75,7 @@ def get_song_from_id(song_id):
     `song_id`: int - genius song id
     https://docs.genius.com/#songs-h2
     """
-    params = {'access_token': config.api_key}
-    response = requests.request(method="GET", url=f'https://api.genius.com/songs/{str(song_id)}', params=params).json()
+    response = requests.request(method="GET", url=f'https://api.genius.com/songs/{str(song_id)}', headers=headersMap).json()
 
     try:
         song = response['response']['song']
@@ -58,7 +85,7 @@ def get_song_from_id(song_id):
         print(error)
         return None
 
-
+# ---------- API Util ----------
 def get_all_full_songs(file):
     """
     Gets all full songs from the `get_song_from_id`.

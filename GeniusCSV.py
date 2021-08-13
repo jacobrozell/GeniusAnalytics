@@ -1,10 +1,11 @@
 import csv
 import pandas as pd
+from GeniusSong import GeniusFullSong
 
-def write_songs(songs, file):
+def write_songs(songs: GeniusFullSong, file):
     """
     Write songs to a csv.
-    `songs`: [GeniusSong]
+    `songs`: [GeniusFullSong]
     """
     print(f'Writing to {str(file)}...')
     with open(file, 'w+') as csvfile: 

@@ -1,3 +1,4 @@
+from GeniusArtist import GeniusArtist
 import GeniusAPI
 import GeniusCSV
 import GeniusUtil
@@ -27,51 +28,65 @@ def get_full_songs(artist, songs, filePath):
 
     if cache_if_exists:
         print(f'Found {cache_file} cache!')
-        songs = cache_if_exists
+        full_songs = cache_if_exists
     else:
         print(f'{cache_file} full empty.')
         print("This will take some time....")
 
         full_songs = []
-        for song in songs:
+        for (index, song) in enumerate(songs):
             try:
-                full_song = GeniusAPI.get_song_from_id(song.id)
-                full_songs.append(full_song)
+                print(f'{index}/{len(songs)}')
+                full_song = GeniusAPI.get_song_from_id(song['id'])
+                if full_song:
+                    full_songs.append(full_song)
             except:
                 errors += 1
                 continue
 
-    GeniusUtil.cache(file=cache_file, data=songs)
-    GeniusCSV.write_songs(songs, filePath)
+    GeniusUtil.cache(file=cache_file, data=full_songs)
+    GeniusCSV.write_songs(full_songs, filePath)
     print(f'{filePath} created.\nErrors: {errors}')
-    return songs
+    return songs 
+
+
+def populate_artist(artist_name) -> GeniusArtist:
+    # Look for artist name in cache before searching
+    artist = GeniusAPI.search(artist_name)
+    print(f'Artist_id found: {artist.id}\n')
+
+    artist_cache_file = f'cache/artists/{artist.id}_{artist.name}.pkl'
+    cache_if_exists = GeniusUtil.get_cache(artist_cache_file)
+
+    if cache_if_exists:
+        print('Cache found!')
+        artist = cache_if_exists
+    else:
+        songs = get_songs(artist.id)
+        full_songs = get_full_songs(
+            artist=artist, 
+            songs=songs, 
+            filePath=f'songs/{artist.id}_{artist.name}_fullsongs.csv'
+        )
+
+        artist.songs = full_songs
+        GeniusUtil.cache(file=f'cache/artists/{artist.id}_{artist.name}.pkl', data=artist)
+
+    artist.make_csv()
+    print(f'Done with {artist_name}.\n')
+    return artist 
 
 # ---------- Script ----------
 print("---------- Genuis Analytics ----------")
-artist_name = "kendrick lamar"
+artist_names = ["peach pit", "kings of leon"]
+artists = []
 
-# Look for artist name in cache before searching
-artist = GeniusAPI.search(artist_name)
-print(f'Artist_id found: {artist.id}\n')
+for name in artist_names:
+    artists.append(populate_artist(name))
 
-artist_cache_file = f'cache/artists/{artist.id}_{artist.name}.pkl'
-cache_if_exists = GeniusUtil.get_cache(artist_cache_file)
+for artist in artists:
+    print(artist.name)
 
-if cache_if_exists:
-    print('Cache Found')
-    artist = cache_if_exists
-    artist.make_csv()
-    print("Done.")
-else:
-    songs = get_songs(artist.id)
-    full_songs = get_full_songs(
-        artist=artist, 
-        songs=songs, 
-        filePath=f'songs/{artist.id}_{artist.name}_fullsongs.csv'
-    )
-
-    artist.songs = full_songs
-    GeniusUtil.cache(file=f'cache/artists/{artist.id}_{artist.name}.pkl', data=artist)
 
 # ----- Top Albums
 # Genius's endpoint for albums is forbidden.

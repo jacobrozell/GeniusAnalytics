@@ -35,15 +35,15 @@ class GeniusArtist:
         return df
 
     def get_artist_dataframe(self):
-         return DataFrame({
+         return DataFrame([{
             'id': self.id,
             'name': self.name,
             'iq': self.iq,
             'is_verified': self.is_verified,
             'image_url': self.image_url,
             'url': self.url, 
-            'top_song': self.get_top_songs_dataframe().sort_values('views', ascending=False).head(1)
-        })
+            #'top_song': self.get_top_songs_dataframe().sort_values('views', ascending=False).head(1)
+        }])
 
     def make_csv(self):
         self.get_artist_dataframe().to_csv(f'artists/{self.id}_{self.name}.csv')

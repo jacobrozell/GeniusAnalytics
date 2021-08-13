@@ -2,7 +2,7 @@ from requests.models import Response
 import GeniusArtist
 import config
 import GeniusCSV
-from GeniusSong import GeniusSong, GeniusFullSong
+import GeniusSong
 import requests
 from pprint import pprint
 
@@ -65,7 +65,7 @@ def get_all_songs(artist_id: int):
             return []
 
         for song in repsonse['songs']:
-            songs.append(GeniusSong(json=song))
+            songs.append(song)
 
     return songs
 
@@ -81,21 +81,8 @@ def get_song_from_id(song_id):
 
     try:
         song = response['response']['song']
-        return GeniusFullSong(song)
+        return GeniusSong.GeniusFullSong(song)
     except:
         error = response['error']
         print(error)
         return None
-
-# ---------- API Util ----------
-def get_all_full_songs(file):
-    """
-    Gets all full songs from the `get_song_from_id`.
-    Returns array of full strings.
-    `file`: str - file to grab id column from
-    """
-    full_songs = []
-    for id in GeniusCSV.get_column_from_csv(f'{file}', 'id'):
-        full_song = get_song_from_id(id)
-        full_songs.append(GeniusFullSong(full_song))
-    return full_songs

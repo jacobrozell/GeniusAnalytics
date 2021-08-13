@@ -1,4 +1,5 @@
-from ArtistStats import ArtistStats
+from requests.models import Response
+import GeniusArtist
 import config
 import GeniusCSV
 from GeniusSong import GeniusSong, GeniusFullSong
@@ -36,7 +37,7 @@ def search(query):
         print(f'Search_API error: {repsonse}')
         return
 
-    return ArtistStats(json=repsonse)
+    return GeniusArtist.GeniusArtist(json=repsonse)
 
 
 def get_all_songs(artist_id: int):
@@ -80,7 +81,7 @@ def get_song_from_id(song_id):
 
     try:
         song = response['response']['song']
-        return song
+        return GeniusFullSong(song)
     except:
         error = response['error']
         print(error)

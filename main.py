@@ -1,14 +1,12 @@
 import GeniusAPI
 import GeniusCSV
 import GeniusUtil
-import pandas as pd
-import numpy as np
-import ArtistStats
 
 # ---------- Scripting Util ----------
 @GeniusUtil.timer_sec
-def create_artist_csv(file, artist_id):
+def get_songs(artist_id):
     cache_file = f'cache/{artist_id}.pkl'
+
     cache_if_exists = GeniusUtil.get_cache(cache_file)
     if cache_if_exists:
         print(f'Found {cache_file} cache!')
@@ -19,47 +17,61 @@ def create_artist_csv(file, artist_id):
         songs = GeniusAPI.get_all_songs(artist_id)
 
     GeniusUtil.cache(file=cache_file, data=songs)
-    GeniusCSV.write_songs(songs, file)
     return songs
 
 @GeniusUtil.timer_sec
-def create_artist_csv_full_song(readFile, file, artist_id):
-    cache_file = f'cache/{artist_id}_full.pkl'
+def get_full_songs(artist, songs, filePath):
+    cache_file = f'cache/{artist.id}_{artist.name}.pkl'
     cache_if_exists = GeniusUtil.get_cache(cache_file)
+    errors = 0
+
     if cache_if_exists:
         print(f'Found {cache_file} cache!')
         songs = cache_if_exists
     else:
         print(f'{cache_file} full empty.')
-        print("This may take some time....")
-        songs = GeniusAPI.get_all_full_songs(readFile)
+        print("This will take some time....")
+
+        full_songs = []
+        for song in songs:
+            try:
+                full_song = GeniusAPI.get_song_from_id(song.id)
+                full_songs.append(full_song)
+            except:
+                errors += 1
+                continue
 
     GeniusUtil.cache(file=cache_file, data=songs)
-    GeniusCSV.write_songs(songs, file)
+    GeniusCSV.write_songs(songs, filePath)
+    print(f'{filePath} created.\nErrors: {errors}')
     return songs
 
 # ---------- Script ----------
 print("---------- Genuis Analytics ----------")
-artist_name = "mac miller"
-artist = GeniusAPI.search(artist_name)
+artist_name = "kendrick lamar"
 
+# Look for artist name in cache before searching
+artist = GeniusAPI.search(artist_name)
 print(f'Artist_id found: {artist.id}\n')
 
-file = f'songs/{artist.id}_{artist.name}_songs.csv'
-full_file = f'songs/{artist.id}_{artist.name}_fullsongs.csv'
+artist_cache_file = f'cache/artists/{artist.id}_{artist.name}.pkl'
+cache_if_exists = GeniusUtil.get_cache(artist_cache_file)
 
-create_artist_csv(file, artist.id)
-full_songs = create_artist_csv_full_song(readFile=file, file=full_file, artist_id=artist.id)
-artist.songs = full_songs
-print(artist.songs)
+if cache_if_exists:
+    print('Cache Found')
+    artist = cache_if_exists
+    artist.make_csv()
+    print("Done.")
+else:
+    songs = get_songs(artist.id)
+    full_songs = get_full_songs(
+        artist=artist, 
+        songs=songs, 
+        filePath=f'songs/{artist.id}_{artist.name}_fullsongs.csv'
+    )
 
-# # ---------- Top Songs ----------
-# df = pd.read_csv(full_file)
-# valid_table = df.replace(to_replace='None', value=np.nan).dropna()
-# valid_table = valid_table.sort_values('views', ascending=False)
-
-
-# valid_table.to_csv(f'top_songs/{artist_id}_{artist_name} top_songs.csv', index=False)
+    artist.songs = full_songs
+    GeniusUtil.cache(file=f'cache/artists/{artist.id}_{artist.name}.pkl', data=artist)
 
 # ----- Top Albums
 # Genius's endpoint for albums is forbidden.

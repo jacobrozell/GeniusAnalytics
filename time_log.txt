@@ -134,3 +134,16 @@ Finished 'create_artist_csv' in 0.0137 secs ; time_stamp: 2021-08-12 21:57:59.55
 Finished 'create_artist_csv_full_song' in 0.1716 secs ; time_stamp: 2021-08-12 21:57:59.726714
 Finished 'create_artist_csv' in 0.0145 secs ; time_stamp: 2021-08-12 22:27:52.813956
 Finished 'create_artist_csv_full_song' in 0.1914 secs ; time_stamp: 2021-08-12 22:27:53.006403
+Finished 'get_songs' in 0.0231 secs ; time_stamp: 2021-08-12 22:43:21.103717
+Finished 'get_songs' in 0.0140 secs ; time_stamp: 2021-08-12 22:43:42.209904
+Finished 'get_songs' in 0.0210 secs ; time_stamp: 2021-08-12 22:44:47.244591
+Finished 'get_full_songs' in 0.1781 secs ; time_stamp: 2021-08-12 22:44:47.423649
+Finished 'get_songs' in 0.0191 secs ; time_stamp: 2021-08-12 22:53:20.298622
+Finished 'get_full_songs' in 0.1640 secs ; time_stamp: 2021-08-12 22:53:20.463230
+Finished 'get_songs' in 0.0114 secs ; time_stamp: 2021-08-12 22:53:40.477362
+Finished 'get_full_songs' in 0.1718 secs ; time_stamp: 2021-08-12 22:53:40.649336
+Finished 'get_songs' in 0.0203 secs ; time_stamp: 2021-08-12 22:54:02.187828
+Finished 'get_full_songs' in 0.1760 secs ; time_stamp: 2021-08-12 22:54:02.364259
+Finished 'get_songs' in 39.3976 secs ; time_stamp: 2021-08-12 23:13:30.669921
+Finished 'get_full_songs' in 657.3540 secs ; time_stamp: 2021-08-12 23:24:28.044305
+Finished 'get_songs' in 35.7467 secs ; time_stamp: 2021-08-13 00:02:33.710745

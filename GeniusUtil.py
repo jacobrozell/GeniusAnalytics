@@ -17,14 +17,14 @@ def timer_sec(func):
         with open("time_log.txt", "a") as f:
             final_time = f'\nFinished {func.__name__!r} in {run_time:.4f} secs ; time_stamp: {datetime.now()}'
             f.write(final_time)
-            print(f'\nFinished {func.__name__!r} in {run_time:.4f} secs ; time_stamp: {datetime.now()}')
+            print(f'\nFinished {func.__name__!r} in {run_time:.4f} secs ; time_stamp: {datetime.now()}\n')
 
         return value
     return wrapper_timer
 
 # ----- Caching -----
 def cache(file, data):
-    with open(file, 'wb') as pickleFile:
+    with open(file, 'wb+') as pickleFile:
         pickle.dump(data, pickleFile)
 
 def get_cache(file):

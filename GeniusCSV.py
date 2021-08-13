@@ -14,8 +14,6 @@ def write_songs(songs, file):
         for song in songs:
             csvwriter.writerow(song.make_row())
 
-    print(f'{file} created!')
-
 def get_column_from_csv(file, value):
     """
     Read column from csv.

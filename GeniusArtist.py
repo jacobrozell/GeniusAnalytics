@@ -22,9 +22,14 @@ class GeniusArtist:
         self.api_path = json['api_path']
         self.header_image_url = json['header_image_url']
         self.image_url = json['image_url']
-        self.iq = json['iq']
         self.is_verified = json['is_verified']
         self.url = json['url']
+
+        try:
+            self.iq = json['iq']
+        except:
+            print(f'No iq for arist.')
+            self.iq = None
 
     def get_top_songs_dataframe(self):
         rows = []

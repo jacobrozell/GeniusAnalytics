@@ -2,6 +2,7 @@ from GeniusArtist import GeniusArtist
 import GeniusAPI
 import GeniusCSV
 import GeniusUtil
+import threading
 
 # ---------- Scripting Util ----------
 @GeniusUtil.timer_sec
@@ -36,7 +37,7 @@ def get_full_songs(artist, songs, filePath):
         full_songs = []
         for (index, song) in enumerate(songs):
             try:
-                print(f'{index}/{len(songs)}')
+                # print(f'{index}/{len(songs)}')
                 full_song = GeniusAPI.get_song_from_id(song['id'])
                 if full_song:
                     full_songs.append(full_song)
@@ -78,15 +79,18 @@ def populate_artist(artist_name) -> GeniusArtist:
 
 # ---------- Script ----------
 print("---------- Genuis Analytics ----------")
-artist_names = ["peach pit", "kings of leon"]
+artist_names = ["naked brothers band", "big time rush", "the lumineers"]
 artists = []
+threads = []
 
 for name in artist_names:
-    artists.append(populate_artist(name))
+    threads.append(threading.Thread(target=populate_artist, args=(name,)))
 
-for artist in artists:
-    print(artist.name)
+for thread in threads:
+    thread.start()
 
+for thread in threads:
+    thread.join()
 
 # ----- Top Albums
 # Genius's endpoint for albums is forbidden.

@@ -2,6 +2,8 @@ import GeniusAPI
 import GeniusCSV
 import GeniusUtil
 import pandas as pd
+import numpy as np
+import ArtistStats
 
 # ---------- Scripting Util ----------
 @GeniusUtil.timer_sec
@@ -18,6 +20,7 @@ def create_artist_csv(file, artist_id):
 
     GeniusUtil.cache(file=cache_file, data=songs)
     GeniusCSV.write_songs(songs, file)
+    return songs
 
 @GeniusUtil.timer_sec
 def create_artist_csv_full_song(readFile, file, artist_id):
@@ -33,27 +36,30 @@ def create_artist_csv_full_song(readFile, file, artist_id):
 
     GeniusUtil.cache(file=cache_file, data=songs)
     GeniusCSV.write_songs(songs, file)
+    return songs
 
 # ---------- Script ----------
 print("---------- Genuis Analytics ----------")
-artist_name = "drake"
-artist_id = GeniusAPI.search(artist_name)
+artist_name = "mac miller"
+artist = GeniusAPI.search(artist_name)
 
-print(f'Artist_id found: {artist_id}\n')
+print(f'Artist_id found: {artist.id}\n')
 
-file = f'songs/{artist_id}_{artist_name}_songs.csv'
-full_file = f'songs/{artist_id}_{artist_name}_fullsongs.csv'
+file = f'songs/{artist.id}_{artist.name}_songs.csv'
+full_file = f'songs/{artist.id}_{artist.name}_fullsongs.csv'
 
-create_artist_csv(file, artist_id)
-create_artist_csv_full_song(readFile=file, file=full_file, artist_id=artist_id)
+create_artist_csv(file, artist.id)
+full_songs = create_artist_csv_full_song(readFile=file, file=full_file, artist_id=artist.id)
+artist.songs = full_songs
+print(artist.songs)
 
-# ---------- Top Songs ----------
-df = pd.read_csv(file)
-valid_table = df.loc[:, 'title':'views']
-#valid_table = valid_table.replace(to_replace='None', value=np.nan).dropna()
-valid_table = valid_table.sort_values('views', ascending=False)
-print(valid_table.head(10))
-valid_table.to_csv(f'top_songs/{artist_id}_{artist_name} top_songs.csv', index=False)
+# # ---------- Top Songs ----------
+# df = pd.read_csv(full_file)
+# valid_table = df.replace(to_replace='None', value=np.nan).dropna()
+# valid_table = valid_table.sort_values('views', ascending=False)
+
+
+# valid_table.to_csv(f'top_songs/{artist_id}_{artist_name} top_songs.csv', index=False)
 
 # ----- Top Albums
 # Genius's endpoint for albums is forbidden.

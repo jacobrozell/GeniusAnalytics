@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 
 def write_songs(songs, file):
     """
@@ -22,16 +23,11 @@ def get_column_from_csv(file, value):
     `value`: column_name to read from the CSV.
     Returns -> List[Values]
     """
-    with open(file, 'r') as csvfile: 
-        reader = csv.DictReader(csvfile)
-
-        firstLine = True
-        values = []
-        for row in reader:
-            if firstLine:
-                firstLine = False
-                continue
-
-            values.append(row[value])
+    df = pd.read_csv(file)
+    try:
+        values = df.value
+    except:
+        print(f'{file} didn\'t have {value}')
+        return
 
     return values

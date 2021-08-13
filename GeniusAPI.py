@@ -1,7 +1,9 @@
+from ArtistStats import ArtistStats
 import config
 import GeniusCSV
 from GeniusSong import GeniusSong, GeniusFullSong
 import requests
+from pprint import pprint
 
 
 root_url = "https://api.genius.com/"
@@ -18,6 +20,8 @@ def search(query):
 
     `query`: str - Can be artist or song
 
+    Returns instance of ArtistStats
+
     https://docs.genius.com/#search-h2
     """
 
@@ -26,16 +30,13 @@ def search(query):
     repsonse = requests.request(method="GET", url=root_url+search_path, params=params, headers=headersMap).json()
 
     try:
-        repsonse = repsonse['response']
+        repsonse = repsonse['response']['hits'][0]['result']
     except:
         repsonse = repsonse['meta']
         print(f'Search_API error: {repsonse}')
         return
 
-    for hit in repsonse['hits']:
-        if hit['type'] == 'song':
-            artist_id = hit['result']['primary_artist']['id']
-            return artist_id
+    return ArtistStats(json=repsonse)
 
 
 def get_all_songs(artist_id: int):

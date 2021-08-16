@@ -79,7 +79,7 @@ def populate_artist(artist_name) -> GeniusArtist:
 
 # ---------- Script ----------
 print("---------- Genuis Analytics ----------")
-artist_names = ["naked brothers band", "big time rush", "the lumineers"]
+artist_names = ["the doors", "fleetwood mac", "mumford and sons", "black keys", "paul baribeau", "the killers", "the smiths", "jake paul", "joji", "ksi", "front bottoms", "louis armstrong", "otis redding", 'kanye']
 artists = []
 threads = []
 

@@ -28,7 +28,6 @@ class GeniusArtist:
         try:
             self.iq = json['iq']
         except:
-            print(f'No iq for arist.')
             self.iq = None
 
     def get_top_songs_dataframe(self):

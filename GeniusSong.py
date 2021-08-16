@@ -42,17 +42,17 @@ class GeniusFullSong:
             self.album_id = self.album_json['api_path'].replace("/albums/", "")
             self.album_url = self.album_json['url']
         except:
-            print("Error populating album properties.")
+            self.album_name = None
+            self.album_id = None
+            self.album_url = None
 
         try:
             self.media_json = json['media']
             for object in self.media_json:
                 if object['provider'] == 'spotify':
                     self.spotify_link = object['url']
-            else:
-                self.spotify_link = None
         except:
-            print("Error populating media properties.")
+            self.spotify_link = None
 
     def make_header(self):
         return [
